@@ -44,10 +44,7 @@ async fn inspect_packages<'a>(
     args: &'a Args,
 ) -> Result<Option<i32>, ReproStatusError> {
     if let Some(filter) = args.filter {
-        packages = packages
-            .into_iter()
-            .filter(|pkg| pkg.status == filter)
-            .collect();
+        packages.retain(|pkg| pkg.status == filter);
     }
     let items = packages
         .iter()
