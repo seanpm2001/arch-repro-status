@@ -1,3 +1,7 @@
+<a name="1.2.9"></a>
+## 1.2.9 (2022-08-17)
+* Bump dependencies
+
 <a name="1.2.8"></a>
 ## 1.2.8 (2022-03-11)
 * Migrate to Rust 2021 edition
