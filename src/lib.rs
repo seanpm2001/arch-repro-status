@@ -226,7 +226,7 @@ fn get_user_packages<'a>(
 }
 
 /// Filters the queried packages according to the arguments specified by the user.
-fn filter_packages(packages: &mut Vec<Package>, filter: Option<Status>) {
+fn filter_packages(packages: &mut Vec<Package>, filter: Option<Status>, pkgnames: &Vec<String>) {
     let mut rem = packages.removing();
     while let Some(entry) = rem.next() {
         let package = entry.value();
@@ -235,6 +235,9 @@ fn filter_packages(packages: &mut Vec<Package>, filter: Option<Status>) {
                 entry.remove();
                 continue;
             }
+        }
+        if !pkgnames.is_empty() && !pkgnames.contains(&package.data.pkgname) {
+            entry.remove();
         }
     }
 }
@@ -247,7 +250,7 @@ pub fn run(args: Args) -> Result<(), ReproStatusError> {
     } else {
         get_user_packages(&client, &args)
     }?;
-    filter_packages(&mut packages, args.filter);
+    filter_packages(&mut packages, args.filter, &args.pkgnames);
     if args.inspect {
         ctrlc::set_handler(move || Term::stdout().show_cursor().expect("failed to show cursor"))?;
         let mut default_selection = Some(0);

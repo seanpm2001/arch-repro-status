@@ -53,6 +53,15 @@ pub struct Args {
         use_value_delimiter = true
     )]
     pub repos: Vec<String>,
+    /// Sets the specific packages to query for.
+    #[clap(
+        short = 'n',
+        long,
+        value_name = "PKGNAME",
+        use_value_delimiter = true,
+        env
+    )]
+    pub pkgnames: Vec<String>,
     /// Sets the filter for package status.
     #[clap(
         short,
