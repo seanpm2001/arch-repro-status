@@ -28,6 +28,7 @@ use std::convert::TryInto;
 use std::fs;
 use std::io::{self, Write};
 use std::process::Command;
+use vecrem::VecExt;
 
 /// User agent that will be used for requests.
 static APP_USER_AGENT: &str = concat!(env!("CARGO_PKG_NAME"), "/", env!("CARGO_PKG_VERSION"));
@@ -105,18 +106,12 @@ async fn inspect_packages<'a>(
 fn print_results<Output: Write>(
     packages: Vec<Package>,
     is_local: bool,
-    filter: Option<Status>,
     output: &mut Output,
 ) -> Result<(), ReproStatusError> {
     let mut negatives = 0;
     for pkg in &packages {
         if pkg.status != Status::Good {
             negatives += 1;
-        }
-        if let Some(filter) = filter {
-            if pkg.status != filter {
-                continue;
-            }
         }
         writeln!(
             output,
@@ -135,9 +130,14 @@ fn print_results<Output: Write>(
         match negatives {
             0 => log::info!("All packages are reproducible!"),
             1 => log::info!(
-                "1/{} package is {} reproducible. Almost there.",
+                "1/{} package is {} reproducible.{}",
                 packages.len(),
                 "not".bold(),
+                String::from(if packages.len() > 1 {
+                    " Almost there."
+                } else {
+                    ""
+                }),
             ),
             _ => log::info!(
                 "{}/{} packages are {} reproducible.",
@@ -225,14 +225,29 @@ fn get_user_packages<'a>(
     Ok(packages)
 }
 
+/// Filters the queried packages according to the arguments specified by the user.
+fn filter_packages(packages: &mut Vec<Package>, filter: Option<Status>) {
+    let mut rem = packages.removing();
+    while let Some(entry) = rem.next() {
+        let package = entry.value();
+        if let Some(filter) = filter {
+            if package.status != filter {
+                entry.remove();
+                continue;
+            }
+        }
+    }
+}
+
 /// Runs `arch-repro-status` and prints the results/shows dialogues.
 pub fn run(args: Args) -> Result<(), ReproStatusError> {
     let client = HttpClient::builder().user_agent(APP_USER_AGENT).build()?;
-    let packages = if let Some(ref maintainer) = args.maintainer {
+    let mut packages = if let Some(ref maintainer) = args.maintainer {
         get_maintainer_packages(maintainer, &client, &args)
     } else {
         get_user_packages(&client, &args)
     }?;
+    filter_packages(&mut packages, args.filter);
     if args.inspect {
         ctrlc::set_handler(move || Term::stdout().show_cursor().expect("failed to show cursor"))?;
         let mut default_selection = Some(0);
@@ -246,12 +261,7 @@ pub fn run(args: Args) -> Result<(), ReproStatusError> {
         }
         Ok(())
     } else {
-        print_results(
-            packages,
-            args.maintainer.is_none(),
-            args.filter,
-            &mut io::stdout(),
-        )
+        print_results(packages, args.maintainer.is_none(), &mut io::stdout())
     }
 }
 
@@ -289,7 +299,6 @@ mod tests {
                 },
             ],
             false,
-            None,
             &mut output,
         )?;
         assert_eq!(
