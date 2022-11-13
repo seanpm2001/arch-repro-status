@@ -1,3 +1,9 @@
+<a name="1.3.0"></a>
+## 1.3.0 (2022-11-13)
+* Allow querying only for specific packages via `--pkgnames`
+* Fix the version format for local packages
+* Bump dependencies
+
 <a name="1.2.9"></a>
 ## 1.2.9 (2022-08-17)
 * Bump dependencies
