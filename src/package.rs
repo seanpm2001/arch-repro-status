@@ -50,14 +50,18 @@ impl Default for Package {
 impl fmt::Display for Package {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
         let version = format!(
-            "{}{}-{}",
+            "{}{}{}",
             if self.data.epoch != 0 {
                 format!("{}:", self.data.epoch)
             } else {
                 String::new()
             },
             self.data.pkgver,
-            self.data.pkgrel
+            if !self.data.pkgver.contains('-') {
+                format!("-{}", self.data.pkgrel)
+            } else {
+                String::new()
+            }
         );
         write!(
             f,
