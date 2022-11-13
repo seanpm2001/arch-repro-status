@@ -22,6 +22,7 @@ OPTIONS:
                                      https://reproducible.archlinux.org]
     -b, --dbpath <PATH>              Sets the path to the pacman database [env: DBPATH=] [default: /var/lib/pacman]
         --repos <REPO>               Sets the repositories to query [default: core,extra,community,multilib]
+    -n, --pkgnames                   Sets the specific packages to query for.
     -f, --filter <STATUS>            Sets the filter for package status [env: FILTER=] [possible values: GOOD, BAD, UNKWN]
     -i, --inspect                    Views the build log or diffoscope of the interactively selected package
     -p, --pager <PAGER>              Sets the pager for viewing files [env: PAGER=] [default: less]
@@ -71,6 +72,8 @@ arch-repro-status -i -v -f BAD
 arch-repro-status -i -v --pager bat
 # specify rebuilderd
 arch-repro-status --rebuilderd https://wolfpit.net/rebuild/
+# specify specific packages (optional)
+arch-repro-status --pkgnames bpftrace,libbpf
 ```
 
 ## License
