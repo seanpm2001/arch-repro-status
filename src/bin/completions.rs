@@ -1,5 +1,5 @@
 use arch_repro_status::args::Args;
-use clap::{ArgEnum, CommandFactory};
+use clap::{CommandFactory, ValueEnum};
 use clap_complete::Shell;
 use std::env;
 

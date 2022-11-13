@@ -1,34 +1,33 @@
 //! Command-line argument parser.
 
-use clap::{AppSettings, Parser};
+use clap::{ArgAction, Parser};
 use rebuilderd_common::Status;
 use std::path::PathBuf;
 
 /// Command-line arguments to parse.
 #[derive(Debug, Parser)]
-#[clap(
+#[command(
     name = env!("CARGO_PKG_NAME"),
     version = env!("CARGO_PKG_VERSION"),
     author = env!("CARGO_PKG_AUTHORS"),
     about = env!("CARGO_PKG_DESCRIPTION"),
-    global_setting = AppSettings::DeriveDisplayOrder,
     rename_all_env = "screaming-snake"
 )]
 pub struct Args {
     /// Disables logging.
-    #[clap(short, long)]
+    #[arg(short, long)]
     pub quiet: bool,
     /// Increases the logging verbosity.
-    #[clap(short, long, parse(from_occurrences), alias = "debug")]
+    #[arg(short, long, action = ArgAction::Count, alias = "debug")]
     pub verbose: u8,
     /// Checks all of the packages on the system.
-    #[clap(short, long)]
+    #[arg(short, long)]
     pub all: bool,
     /// Sets the username of the maintainer.
-    #[clap(short, long, value_name = "MAINTAINER", env)]
+    #[arg(short, long, value_name = "MAINTAINER", env)]
     pub maintainer: Option<String>,
     /// Sets the address of the rebuilderd instance.
-    #[clap(
+    #[arg(
         short,
         long,
         value_name = "URL",
@@ -37,7 +36,7 @@ pub struct Args {
     )]
     pub rebuilderd: String,
     /// Sets the path to the pacman database.
-    #[clap(
+    #[arg(
         short = 'b',
         long,
         value_name = "PATH",
@@ -46,7 +45,7 @@ pub struct Args {
     )]
     pub dbpath: String,
     /// Sets the repositories to query.
-    #[clap(
+    #[arg(
         long,
         value_name = "REPO",
         default_value = "core,extra,community,multilib",
@@ -54,7 +53,7 @@ pub struct Args {
     )]
     pub repos: Vec<String>,
     /// Sets the specific packages to query for.
-    #[clap(
+    #[arg(
         short = 'n',
         long,
         value_name = "PKGNAME",
@@ -63,21 +62,28 @@ pub struct Args {
     )]
     pub pkgnames: Vec<String>,
     /// Sets the filter for package status.
-    #[clap(
+    #[arg(
         short,
         long,
         value_name = "STATUS",
-        possible_values = &["GOOD", "BAD", "UNKWN"],
+        value_parser = *&["GOOD", "BAD", "UNKWN"],
         env
     )]
     pub filter: Option<Status>,
     /// Views the build log or diffoscope of the interactively selected package.
-    #[clap(short, long)]
+    #[arg(short, long)]
     pub inspect: bool,
     /// Sets the pager for viewing files.
-    #[clap(short, long, value_name = "PAGER", default_value = "less", env)]
+    #[arg(short, long, value_name = "PAGER", default_value = "less", env)]
     pub pager: String,
     /// Sets the cache directory for log files.
-    #[clap(short, long, value_name = "DIR", env)]
+    #[arg(short, long, value_name = "DIR", env)]
     pub cache_dir: Option<PathBuf>,
+}
+
+#[test]
+#[cfg(test)]
+fn verify_args() {
+    use clap::CommandFactory;
+    Args::command().debug_assert()
 }
