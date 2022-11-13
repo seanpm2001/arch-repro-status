@@ -42,7 +42,7 @@ pub struct ArchwebPackage {
     #[serde(rename = "installed_size")]
     pub installed_size: i64,
     #[serde(rename = "build_date")]
-    pub build_date: String,
+    pub build_date: Option<String>,
     #[serde(rename = "last_update")]
     pub last_update: String,
     #[serde(rename = "flag_date")]
@@ -72,7 +72,8 @@ impl<'a> From<AlpmPackage<'a>> for ArchwebPackage {
             compressed_size: pkg.size(),
             installed_size: pkg.isize(),
             packager: pkg.packager().unwrap_or("-").to_string(),
-            build_date: NaiveDateTime::from_timestamp(pkg.build_date(), 0).to_string(),
+            build_date: NaiveDateTime::from_timestamp_opt(pkg.build_date(), 0)
+                .map(|v| v.to_string()),
             ..Self::default()
         }
     }
@@ -135,11 +136,9 @@ impl fmt::Display for ArchwebPackage {
             "Last Packager".cyan(),
             self.packager
         ))?;
-        f.write_str(&format!(
-            "\t{:16}: {}\n",
-            "Build Date".cyan(),
-            self.build_date
-        ))?;
+        if let Some(date) = &self.build_date {
+            f.write_str(&format!("\t{:16}: {}\n", "Build Date".cyan(), date))?;
+        }
         if !self.last_update.is_empty() {
             f.write_str(&format!(
                 "\t{:16}: {}\n",
@@ -182,7 +181,7 @@ mod tests {
             url: String::from("example.com"),
             compressed_size: 660662,
             installed_size: 678620,
-            build_date: String::from("2000"),
+            build_date: Some(String::from("2000")),
             last_update: String::from("2000"),
             flag_date: Some(String::from("today")),
             maintainers: vec![String::from("orhun"), String::from("nuhro")],
