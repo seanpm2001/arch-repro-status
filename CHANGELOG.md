@@ -1,3 +1,8 @@
+<a name="1.3.1"></a>
+## 1.3.1 (2022-11-16)
+* Update clap to v4
+* Bump dependencies
+
 <a name="1.3.0"></a>
 ## 1.3.0 (2022-11-13)
 * Allow querying only for specific packages via `--pkgnames`
