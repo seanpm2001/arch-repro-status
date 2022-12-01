@@ -64,7 +64,6 @@ async fn inspect_packages<'a>(
             available_operations.push("show diffoscope");
         }
         available_operations.push("show package info");
-
         let operation = Select::with_theme(&ColorfulTheme::default())
             .with_prompt("Select operation")
             .default(0)
