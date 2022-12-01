@@ -1,3 +1,9 @@
+<a name="1.3.3"></a>
+## 1.3.3 (2022-12-01)
+* Only offer "show diffoscope" option in inspect mode if the package has a diffoscope
+* Fix filtering the package status
+* Bump dependencies
+
 <a name="1.3.2"></a>
 ## 1.3.2 (2022-11-16)
 * Avoid Cargo.lock being out-of-date by checking via GitLab CI
