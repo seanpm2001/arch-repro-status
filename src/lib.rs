@@ -28,6 +28,7 @@ use std::convert::TryInto;
 use std::fs;
 use std::io::{self, Write};
 use std::process::Command;
+use std::str::FromStr;
 use vecrem::VecExt;
 
 /// User agent that will be used for requests.
@@ -44,7 +45,7 @@ async fn inspect_packages<'a>(
     client: &'a HttpClient,
     args: &'a Args,
 ) -> Result<Option<i32>, ReproStatusError> {
-    if let Some(filter) = args.filter {
+    if let Some(filter) = args.filter.as_ref().and_then(|s| Status::from_str(s).ok()) {
         packages.retain(|pkg| pkg.status == filter);
     }
     let items = packages
@@ -250,7 +251,11 @@ pub fn run(args: Args) -> Result<(), ReproStatusError> {
     } else {
         get_user_packages(&client, &args)
     }?;
-    filter_packages(&mut packages, args.filter, &args.pkgnames);
+    filter_packages(
+        &mut packages,
+        args.filter.as_ref().and_then(|s| Status::from_str(s).ok()),
+        &args.pkgnames,
+    );
     if args.inspect {
         ctrlc::set_handler(move || Term::stdout().show_cursor().expect("failed to show cursor"))?;
         let mut default_selection = Some(0);

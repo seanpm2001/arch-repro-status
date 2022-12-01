@@ -1,7 +1,6 @@
 //! Command-line argument parser.
 
 use clap::{ArgAction, Parser};
-use rebuilderd_common::Status;
 use std::path::PathBuf;
 
 /// Command-line arguments to parse.
@@ -69,7 +68,7 @@ pub struct Args {
         value_parser = *&["GOOD", "BAD", "UNKWN"],
         env
     )]
-    pub filter: Option<Status>,
+    pub filter: Option<String>,
     /// Views the build log or diffoscope of the interactively selected package.
     #[arg(short, long)]
     pub inspect: bool,
