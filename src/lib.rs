@@ -58,12 +58,18 @@ async fn inspect_packages<'a>(
         .interact_on_opt(&Term::stderr())
         .map_or(None, |v| v)
     {
+        let mut available_operations = vec!["show build log"];
+        if packages[index].has_diffoscope {
+            available_operations.push("show diffoscope");
+        }
+        available_operations.push("show package info");
+
         let operation = Select::with_theme(&ColorfulTheme::default())
             .with_prompt("Select operation")
             .default(0)
-            .items(&["show build log", "show diffoscope", "show package info"])
+            .items(&available_operations)
             .interact_on_opt(&Term::stderr())?;
-        if let Some(2) = operation {
+        if operation == Some(available_operations.len() - 1) {
             println!("\n{}", packages[index].data);
             Confirm::with_theme(&ColorfulTheme {
                 hint_style: Style::new().for_stderr().hidden(),
@@ -176,11 +182,13 @@ fn get_maintainer_packages<'a>(
                 data: pkg,
                 status: p.status,
                 build_id: p.build_id.unwrap_or_default(),
+                has_diffoscope: p.has_diffoscope,
             },
             None => Package {
                 data: pkg,
                 status: Status::Unknown,
                 build_id: 0,
+                has_diffoscope: false,
             },
         })
     }
@@ -214,11 +222,13 @@ fn get_user_packages<'a>(
                 data: ArchwebPackage::from(pkg),
                 status: p.status,
                 build_id: p.build_id.unwrap_or_default(),
+                has_diffoscope: p.has_diffoscope,
             },
             None => Package {
                 data: ArchwebPackage::from(pkg),
                 status: Status::Unknown,
                 build_id: 0,
+                has_diffoscope: false,
             },
         });
     }
@@ -289,6 +299,7 @@ mod tests {
                     },
                     status: Status::Good,
                     build_id: 0,
+                    has_diffoscope: false,
                 },
                 Package {
                     data: ArchwebPackage {
@@ -299,6 +310,7 @@ mod tests {
                     },
                     status: Status::Bad,
                     build_id: 0,
+                    has_diffoscope: false,
                 },
             ],
             false,

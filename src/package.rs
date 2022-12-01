@@ -35,6 +35,8 @@ pub struct Package {
     pub status: Status,
     /// Rebuilderd build ID.
     pub build_id: i32,
+    /// If rebuilderd recorded a diffoscope for the build
+    pub has_diffoscope: bool,
 }
 
 impl Default for Package {
@@ -43,6 +45,7 @@ impl Default for Package {
             data: ArchwebPackage::default(),
             status: Status::Unknown,
             build_id: 0,
+            has_diffoscope: false,
         }
     }
 }
@@ -115,6 +118,7 @@ mod tests {
             },
             status: Status::Good,
             build_id: 0,
+            has_diffoscope: false,
         };
         let path = package.get_log_path(LogType::Diffoscope, Some(PathBuf::from("test")))?;
         assert_eq!("test/0_diffoscope.log", path.to_string_lossy());
