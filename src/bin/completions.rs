@@ -11,6 +11,6 @@ fn main() -> Result<(), std::io::Error> {
     for &shell in Shell::value_variants() {
         clap_complete::generate_to(shell, &mut app, env!("CARGO_PKG_NAME"), &out_dir)?;
     }
-    println!("Completion scripts are generated in {:?}", out_dir);
+    println!("Completion scripts are generated in {out_dir:?}");
     Ok(())
 }

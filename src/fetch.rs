@@ -9,7 +9,7 @@ pub async fn fetch_archweb_packages<'a>(
     client: &'a HttpClient,
     maintainer: &'a str,
 ) -> Result<Vec<ArchwebPackage>, ReproStatusError> {
-    let url = format!("{}/?maintainer={}", ARCHWEB_ENDPOINT, maintainer);
+    let url = format!("{ARCHWEB_ENDPOINT}/?maintainer={maintainer}");
     let response = client
         .get(&url)
         .send()
@@ -39,7 +39,7 @@ pub async fn fetch_rebuilderd_packages<'a>(
     rebuilder: &'a str,
 ) -> Result<Vec<RebuilderdPackage>, ReproStatusError> {
     Ok(client
-        .get(format!("{}/api/v0/pkgs/list?distro=archlinux", rebuilder))
+        .get(format!("{rebuilder}/api/v0/pkgs/list?distro=archlinux"))
         .send()
         .await?
         .json()

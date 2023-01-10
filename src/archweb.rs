@@ -189,7 +189,7 @@ mod tests {
             licenses: vec![String::from("MIT"), String::from("GPL")],
             ..ArchwebPackage::default()
         };
-        println!("{}", package);
+        println!("{package}");
         assert_eq!(
             "\tName            : test\
             \n\tVersion         : 2:1.2.3-10\
