@@ -1,6 +1,6 @@
 <a name="1.3.4"></a>
 ## 1.3.4 (2023-01-10)
-* Bump dependencies
+* Bump dependencies (fixes [RUSTSEC-2023-0001](https://rustsec.org/advisories/RUSTSEC-2023-0001.html))
 
 <a name="1.3.3"></a>
 ## 1.3.3 (2022-12-01)
