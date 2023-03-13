@@ -1,3 +1,7 @@
+<a name="1.3.5"></a>
+## 1.3.5 (2023-03-13)
+* Bump dependencies (fixes [RUSTSEC-2023-0018](https://rustsec.org/advisories/RUSTSEC-2023-0018.html) & [RUSTSEC-2023-0005](https://rustsec.org/advisories/RUSTSEC-2023-0005.html))
+
 <a name="1.3.4"></a>
 ## 1.3.4 (2023-01-10)
 * Bump dependencies (fixes [RUSTSEC-2023-0001](https://rustsec.org/advisories/RUSTSEC-2023-0001.html))
